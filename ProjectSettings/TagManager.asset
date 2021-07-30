@@ -4,14 +4,22 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - TrampaNivel1
-  - TrampaNivel1.1
+  - Shootable
   - TrampaNivel1.2
   - TrampaNivel1.3
-  - Bullet
-  - Cheese
-  - SuperShoot
   - Final
+  - TrampaNivel1.1
+  - Bullet
+  - SuperShoot
+  - Floor
+  - Cheese
+  - Ground
+  - Key
+  - DoorOpened
+  - OpenedDoor
+  - OpenedDoor2
+  - Key2
+  - Nivel2
   layers:
   - Default
   - TransparentFX
@@ -19,6 +27,11 @@ TagManager:
   - 
   - Water
   - UI
+  - 
+  - 
+  - Lighting
+  - Ground
+  - Postprocessing
   - Jumpeable
   - 
   - 
@@ -40,12 +53,10 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
   m_SortingLayers:
+  - name: Fire
+    uniqueID: 3804908061
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

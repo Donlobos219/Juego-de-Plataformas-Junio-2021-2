@@ -63,15 +63,14 @@ public class AIScript : MonoBehaviour
 
     public Rigidbody projectile;
 
-    public bool BunnyCanJump = true;
-
-    
-    public float jumpForce = 100f;
     public float delay = 5;
 
     private Rigidbody rbody;
 
     private CharacterControllerPlatform charactercontroller;
+
+    public Transform spawnMunecoNieve;
+    public GameObject munecoDeNieve;
 
    
     //public AudioSource audioRobot;
@@ -133,7 +132,6 @@ public class AIScript : MonoBehaviour
     {
         if(EnemyType == "Conejo" && EnemyHealth == 0f)
         {
-            Destroy(this.gameObject);
             charactercontroller.superShotIcon.SetActive(false);
             charactercontroller.dashIcon.SetActive(false);
             charactercontroller.superJumpIcon.SetActive(true);
@@ -142,7 +140,10 @@ public class AIScript : MonoBehaviour
             charactercontroller.CanDash = false;
             charactercontroller.canUseSuperShoot = false;
             charactercontroller.canNormalShoot = true;
-            charactercontroller.gravityScale = 4f;
+            charactercontroller.speed = 40f;
+            charactercontroller.gravityScale = 8f;
+            munecoDeNieve.SetActive(false);
+            Invoke("MunecoDeNieveDesactivado", 5f);
         }
 
         if (EnemyType == "Pajaro" && EnemyHealth == 0f)
@@ -156,6 +157,7 @@ public class AIScript : MonoBehaviour
             charactercontroller.normalJump = true;
             charactercontroller.canUseSuperShoot = false;
             charactercontroller.canNormalShoot = true;
+            charactercontroller.speed = 40f;
             charactercontroller.gravityScale = 8f;
         }
 
@@ -170,18 +172,26 @@ public class AIScript : MonoBehaviour
             charactercontroller.normalJump = true;
             charactercontroller.canUseSuperShoot = true;
             charactercontroller.canNormalShoot = false;
+            charactercontroller.speed = 40f;
             charactercontroller.gravityScale = 8f;
         }
 
-
-
-        if (EnemyType == "Conejo" && BunnyCanJump == true)
+        if (EnemyType == "Perro" && EnemyHealth == 0f)
+            
         {
-            //Rigidbody rb = GetComponent<Rigidbody>();
-            //rb.velocity = Vector3.up * jumpForce;
-            //StartCoroutine(CanJumpBunny(delay));           
-            //BunnyCanJump = false;
+            Destroy(this.gameObject);
+            charactercontroller.superShotIcon.SetActive(false);
+            charactercontroller.dashIcon.SetActive(false);
+            charactercontroller.superJumpIcon.SetActive(false);
+            charactercontroller.canUseChargeJump = false;
+            charactercontroller.CanDash = false;
+            charactercontroller.normalJump = true;
+            charactercontroller.canUseSuperShoot = false;
+            charactercontroller.canNormalShoot = true;
+            charactercontroller.speed = 100f;
+            charactercontroller.gravityScale = 8f;
         }
+
         onRange = Vector3.Distance(transform.position, player.position) < range;
         
         float distance = Vector3.Distance(CharacterControllerPlatform.playerPos, transform.position);
@@ -351,9 +361,23 @@ public class AIScript : MonoBehaviour
 
         }
 
+        if (other.gameObject.tag == "Bullet" && EnemyType == "Perro")
+        {
+            Destroy(other.gameObject);
+            EnemyHealth -= 1f;
+
+        }
+
+        if (other.gameObject.tag == "Player" && EnemyType == "MunecoNieve")
+        {
+            charactercontroller.relentizarPersonaje = true;
+            
+        }
+
+
 
     }
-  
+
     void ChasePlayer()
     {
         
@@ -420,10 +444,15 @@ public class AIScript : MonoBehaviour
         aiMemorizesPlayer = false;
     }
 
-    IEnumerator CanJumpBunny(float delay)
+
+    
+
+    public void MunecoDeNieveDesactivado()
     {
-        yield return new WaitForSeconds(delay);
-        BunnyCanJump = true;
+        
+        EnemyHealth = 2f;
+        munecoDeNieve.SetActive(true);
+        this.gameObject.transform.position = spawnMunecoNieve.position;
     }
 
 }

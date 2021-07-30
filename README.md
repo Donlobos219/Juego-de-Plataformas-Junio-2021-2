@@ -1,2 +1,2 @@
-# Juego-de-Plataformas-Junio-2021
+# JuegodePlataformasJunio2021GitHub
  

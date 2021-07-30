@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: 1be707b6c27a4504bae5e15c8ab6706c
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: -623603649343465320
+    second: Scene
   externalObjects:
   - first:
       type: UnityEngine:Material

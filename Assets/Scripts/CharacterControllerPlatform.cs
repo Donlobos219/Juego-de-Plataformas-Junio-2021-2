@@ -25,6 +25,11 @@ public class CharacterControllerPlatform : MonoBehaviour
     public bool canJump;
     public bool canMove;
 
+    public bool hasKey = false;
+    public bool hasKey2 = false;
+    public bool opennedDoor = false;
+    public bool opennedDoor2 = false;
+
     public bool normalJump;
     public bool canUseChargeJump;
     public bool CanDash;
@@ -58,6 +63,11 @@ public class CharacterControllerPlatform : MonoBehaviour
     public GameObject dashIcon;
     public GameObject superJumpIcon;
     public GameObject superShotIcon;
+
+    public bool relentizarPersonaje;
+    public float relentizar = 2f;
+
+    static Animator anim;
     
     // Start is called before the first frame update
     void Start()
@@ -65,6 +75,8 @@ public class CharacterControllerPlatform : MonoBehaviour
         superShotIcon.SetActive(false);
         superJumpIcon.SetActive(false);
         dashIcon.SetActive(false);
+        anim = GetComponent<Animator>();
+        relentizarPersonaje = false;
         canNormalShoot = true;
         canDoShoot = true;
         jumpPressure = 0f;
@@ -75,11 +87,16 @@ public class CharacterControllerPlatform : MonoBehaviour
         canUseChargeJump = false;
         canUseSuperShoot = false;
         CanDash = false;
+        canDoDash = true;
         StartCoroutine(TrackPlayer());
     }
-
+    public void CanUseChargedJump()
+    {
+        canUseChargeJump = true;
+    }
     void FixedUpdate()
     {
+        
         Vector3 gravity = globalGravity * gravityScale * Vector3.up;
         rbody.AddForce(gravity, ForceMode.Acceleration);
 
@@ -107,11 +124,29 @@ public class CharacterControllerPlatform : MonoBehaviour
         {
             PlayerMesh.rotation = Quaternion.LookRotation(MoveDirection);
         }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            anim.SetBool("isWalking", true);
+        }
+        else
+        {
+            anim.SetBool("isWalking", false);
+        }
             
     }
-
+    public void RelentizarPersonaje()
+    {
+        speed = 10;
+        StartCoroutine(NormalSpeed(delay));
+        relentizarPersonaje = false;
+    }
     void Update()
     {
+        if(relentizarPersonaje == true)
+        {
+            RelentizarPersonaje();
+        }
         if(canDoShoot == true && canNormalShoot == true)
         {
             if(Input.GetMouseButton(0))
@@ -119,6 +154,7 @@ public class CharacterControllerPlatform : MonoBehaviour
                 Rigidbody shoot = (Rigidbody)Instantiate(bullet, emptyObject.transform.position + transform.forward, transform.rotation);
                 shoot.AddForce(transform.forward * impulse, ForceMode.Impulse);
                 StartCoroutine(CanShoot(shootDelay));
+                anim.SetTrigger("isAttacking");
                 canDoShoot = false;                       
             }
         }
@@ -130,6 +166,7 @@ public class CharacterControllerPlatform : MonoBehaviour
                 shoot.AddForce(transform.forward * superImpulse, ForceMode.Impulse);
                 StartCoroutine(CanShoot(shootDelay));
                 canDoShoot = false;
+                
             }
 
                 canJump = Physics.CheckSphere(GroundCheck.position, checkDistance, GroundMask);
@@ -201,6 +238,12 @@ public class CharacterControllerPlatform : MonoBehaviour
         canDoDash = true;
     }
 
+    IEnumerator NormalSpeed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        speed = 30;
+    }
+
     IEnumerator TrackPlayer()
     {
         while (true)
@@ -209,6 +252,7 @@ public class CharacterControllerPlatform : MonoBehaviour
             yield return null;
         }
     }
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -226,15 +270,49 @@ public class CharacterControllerPlatform : MonoBehaviour
         {
             this.gameObject.transform.position = spawnPoint3.position;
         }
+
+        
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Final")
         {
             SceneManager.LoadScene("Final");
         }
+        if (other.gameObject.tag == "Key")
+        {
+            hasKey = true;
+            Destroy(other.gameObject);
+            opennedDoor = true;
+            
+        }
+
+        if(other.gameObject.tag == "Key2")
+        {
+            hasKey2 = true;
+            Destroy(other.gameObject);
+            opennedDoor2 = true;
+        }
+
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("OpenedDoor") && opennedDoor == true)
+        {
+            other.GetComponent<DoorClosed>().SwitchDoor();
+        }
+
+        if (other.gameObject.CompareTag("OpenedDoor2") && opennedDoor2 == true)
+        {
+            other.GetComponent<DoorClosed>().SwitchDoor2();
+        }
+
+
+    }
+
+    
 
     public void Quit()
     {
@@ -245,4 +323,13 @@ public class CharacterControllerPlatform : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
+    public void SiguienteNivel()
+    {
+        SceneManager.LoadScene("Nivel1");
+    }
+
+    public void Nivel3()
+    {
+        SceneManager.LoadScene("Nivel2");
+    }
 }
